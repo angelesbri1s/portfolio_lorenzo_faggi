@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Titolo del lavoro — Lorenzo Faggi</title>
+  <meta name="description" content="Dettaglio del progetto.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Wittgenstein:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="index.html" class="site-logo">Lorenzo Faggi</a>
+    <button class="nav-toggle" aria-label="Apri menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="site-nav">
+      <a href="index.html">Recent</a>
+      <a href="works.html" aria-current="page">Works</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <!-- Questo contenitore viene riempito automaticamente da js/script.js,
+       che legge dal Google Sheet la riga corrispondente a ?slug=... 
+       nell'indirizzo di questa pagina (es. work.html?slug=opera-blu). -->
+  <main id="work-container">
+    <p style="padding:2rem;color:var(--ink);">drink water and wait…</p>
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026 Lorenzo Faggi</span>
+    <span>Milano, IT</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lorenzo Faggi — Recent</title>
+  <meta name="description" content="Lorenzo Faggi — works.">
+
+  <!-- Font: Libertinus (titoli, testo, numeri/date) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Wittgenstein:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ============ NAVIGAZIONE (uguale su tutte le pagine) ============ -->
+  <header class="site-header">
+    <a href="index.html" class="site-logo">Lorenzo Faggi</a>
+    <button class="nav-toggle" aria-label="Apri menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="site-nav">
+      <a href="index.html" aria-current="page">Recent</a>
+      <a href="works.html">Works</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <!-- ============ HERO: il lavoro più recente ============ -->
+  <main>
+    <!-- Questo contenitore viene riempito automaticamente da js/script.js
+         leggendo il lavoro più recente dal Google Sheet. -->
+    <section class="hero" id="hero-container">
+      <p style="padding:2rem 0;color:var(--ink-soft);">drink water and wait…</p>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <span>© 2026 Lorenzo Faggi</span>
+    <span>Milano, IT</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

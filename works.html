@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lorenzo Faggi — Works</title>
+  <meta name="description" content="Archivio completo dei lavori di Lorenzo Faggi.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Wittgenstein:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="index.html" class="site-logo">Lorenzo Faggi</a>
+    <button class="nav-toggle" aria-label="Apri menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="site-nav">
+      <a href="index.html">Recent</a>
+      <a href="works.html" aria-current="page">Works</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="sheet-intro">
+      <h1>Works</h1>
+    </section>
+
+    <!-- JS populates this section with grouped columns -->
+    <section id="works-index" class="works-index">
+      <p style="padding: 1rem 0; color: var(--ink-soft);">drink water and wait…</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026 Lorenzo Faggi</span>
+    <span>Milano, IT</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

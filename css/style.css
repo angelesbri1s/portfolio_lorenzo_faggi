@@ -1,0 +1,502 @@
+/* ============================================================
+   STYLE.CSS
+   Foglio di stile principale del sito.
+   Diviso in sezioni con commenti, così puoi orientarti anche
+   se non conosci bene il CSS. Cerca i titoli in MAIUSCOLO.
+   ============================================================ */
+
+/* ---------- 1. VARIABILI (design tokens) ----------
+   Cambia i colori/font qui e si aggiornano su tutto il sito. */
+:root {
+  --paper: #FFFFFF;       /* sfondo generale, carta chiara */
+  --paper-2: #FFFFFF;     /* sfondo leggermente più scuro (footer, hover) */
+  --ink: #14140F;         /* testo principale, quasi nero */
+  --ink-soft: #959594;    /* testo secondario / didascalie */
+  --line: #959594;        /* linee sottili, bordi */
+  --accent: #f97373;      /* verde-processo, colore di accento */
+  --accent-ink: #EFEEE7;  /* testo sopra l'accento */
+
+  --font-display: "Wittgenstein", Georgia, serif;
+  --font-body: "Wittgenstein", -apple-system, sans-serif;
+  --font-mono: "Wittgenstein", "Courier New", monospace;
+
+  --gap: clamp(1rem, 2.5vw, 2.5rem);
+  --nav-h: 4.5rem;
+}
+
+/* ---------- 2. RESET DI BASE ---------- */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, p { margin: 0; }
+
+/* Focus visibile per navigazione da tastiera (accessibilità) */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------- 3. NAVIGAZIONE ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-h);
+  padding: 0 var(--gap);
+  background: var(--paper);
+  /*border-bottom: 1px solid var(--line);*/
+}
+
+.site-logo {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.site-nav {
+  display: flex;
+  gap: clamp(1.2rem, 3vw, 2.4rem);
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  letter-spacing: 0.01em;
+}
+
+.site-nav a {
+  position: relative;
+  padding-bottom: 3px;
+}
+
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 0; height: 1px;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.site-nav a:hover::after,
+.site-nav a[aria-current="page"]::after {
+  width: 100%;
+}
+
+.site-nav a[aria-current="page"] { color: var(--accent); }
+
+/* Bottone menu mobile (hamburger), nascosto su desktop */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 0px solid var(--ink);
+  border-radius: 0;
+  width: 40px;
+  height: 34px;
+  cursor: pointer;
+}
+.nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--ink);
+  margin: 3px auto;
+}
+
+@media (max-width: 760px) {
+  .nav-toggle { display: block; }
+  .site-nav {
+    position: fixed;
+    top: var(--nav-h);
+    left: 0; right: 0;
+    background: var(--paper);
+    flex-direction: column;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .site-nav.is-open { max-height: 60vh; }
+  .site-nav a {
+    padding: 1rem var(--gap);
+    border-top: 0px solid var(--line);
+  }
+}
+
+/* ---------- 4. HERO (usato in index.html, "Recent") ---------- */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Occupies the visible screen minus top nav & footer padding */
+  min-height: calc(100vh - var(--nav-h) - 4rem); 
+  padding: 1rem var(--gap);
+}
+
+.hero-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Size constraints: controls image dimensions on desktop */
+  width: 100%;
+  max-width: 1000px;      /* Restricts the width so it isn't 100% full screen width */
+  max-height: 65vh;      /* Restricts the height so it doesn't take the full screen height */
+  aspect-ratio: 16 / 9;  /* Maintains standard video/photo proportions */
+  
+  border: 1px;
+  background: var(--paper-2);
+  text-decoration: none;
+  overflow: hidden;
+}
+
+/* Background image filling the hero container */
+.hero-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.hero-frame img,
+.hero-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Hover effect: Hide image on mouse hover */
+.hero-link:hover .hero-frame {
+  opacity: 0;
+}
+
+/* Centered title revealed on hover */
+.hero-caption {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  opacity: 0;
+  padding: 1.5rem;
+  transition: color 0.4s ease;
+}
+
+/* Title fades in on hover */
+.hero-link:hover .hero-caption {
+  opacity: 1;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--ink);
+  white-space: pre-line;
+  transition: color 0.3s ease;
+}
+
+.hero-link:hover .hero-title {
+  color: var(--ink); /* Changes title color when image fades out */
+}
+
+
+/* ---------- 5. GRIGLIA "CONTACT SHEET" (usata in works.html) ---------- */
+.sheet-intro {
+  padding: clamp(1.5rem, 4vw, 3rem) var(--gap) 1.5rem;
+  max-width: 46ch;
+}
+.sheet-intro h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.sheet-intro p { color: var(--ink-soft); }
+
+.frame-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4rem;
+}
+
+@media (max-width: 900px) {
+  .frame-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .frame-grid { grid-template-columns: 1fr; }
+}
+
+.frame {
+  position: relative;
+  background: var(--paper);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  display: block;
+}
+
+.frame img,
+.frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.frame:hover img,
+.frame:hover video,
+.frame.is-active img,
+.frame.is-active video {
+  transform: scale(1.04);
+}
+
+/*.frame-index {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent-ink);
+  background: var(--accent);
+  padding: 0.15rem 0.4rem;
+  z-index: 2;
+}*/
+
+.frame-label {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 0.9rem 1rem;
+  background: linear-gradient(to top, rgba(20,20,15,0.82), rgba(20,20,15,0));
+  color: var(--accent-ink);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  z-index: 2;
+}
+.frame:hover .frame-label,
+.frame.is-active .frame-label {
+  transform: translateY(0);
+}
+
+.frame-label .t { display: block; font-family: var(--font-display); font-size: 1.05rem; }
+.frame-label .y { display: block; font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.85; }
+
+/* ---------- 6. PAGINA SINGOLO LAVORO (work.html) ---------- */
+/* Base link style inside description */
+main .work-body a,
+main .work-body a:visited {
+  color: var(--ink) !important;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.25s ease-in-out;
+}
+
+/* Hover state on mouseover */
+main .work-body a:hover,
+main .work-body a:focus {
+  color: var(--accent) !important;
+  cursor: pointer;
+}
+
+.category .work-title {
+  white-space: pre-line; /* Automatically renders line breaks from Google Sheets */
+  display: inline-block;
+}
+
+.category .work-title br {
+  display: block;
+  content: "";
+  margin-top: 0.2rem;
+  white-space: pre-line;
+}
+
+.work-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers title vertically */
+  align-items: center;     /* Centers title horizontally */
+  min-height: calc(100vh - var(--nav-h)); /* Forces height to 100% of screen minus top navbar */
+  box-sizing: border-box;
+}
+
+.work-header .frame-index {
+  position: static;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+.work-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 3rem);
+  text-align: center;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: pre-line;
+}
+
+.work-media {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);   /* 2 colonne uguali */
+  gap: clamp(1.5rem, 4vw, 3.5rem);          /* gutter largo, orizzontale e verticale */
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 4rem;
+}
+
+/* Su schermi stretti passa a 1 colonna sola */
+@media (max-width: 700px) {
+  .work-media {
+    grid-template-columns: 1fr;
+  }
+}
+
+.work-media figure {
+  margin: 0;
+  /* niente bordo: rimosso apposta rispetto a prima */
+}
+
+.work-media img {
+  width: 100%;
+  height: auto;     /* l'immagine mantiene le sue proporzioni naturali,
+                        non viene ritagliata né deformata */
+  display: block;
+}
+
+.work-media video { width: 100%; }
+
+/* Un video occupa entrambe le colonne, invece di starci stretto in una sola */
+.work-media .media-full {
+  grid-column: 1 / -1;
+}
+
+.work-body {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  padding: 0 var(--gap) 4rem;
+}
+
+.work-body p { 
+  color: var(--ink); 
+  margin-bottom: 1rem;
+}
+
+.work-body p:last-child { margin-bottom: 0; }
+
+.work-body a {
+  color: var(--ink);
+  font-weight: 600;
+  transition: color 0.25s ease;
+}
+
+.work-body a:hover {
+  color: var(--accent);
+}
+
+.work-body em {
+  font-style: italic;
+}
+
+.work-body strong {
+  font-weight: 600;
+}
+
+
+
+
+/* ---------- 7. PAGINA ABOUT ---------- */
+.about-wrap {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  padding: 0 var(--gap) 4rem;
+}
+
+.about-text p {
+  color: var(--ink); 
+  margin-bottom: 1rem;
+}
+
+.contact-list {
+  margin-top: 2rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+.contact-list a { display: inline-block; margin-right: 1.2rem; }
+.contact-list a:hover { color: var(--accent); }
+
+/* ---------- 8. FOOTER ---------- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 1.5rem var(--gap) 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+
+/* ------ Works Index ---- */
+.works-index{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:5rem;
+    padding:4rem var(--gap);
+}
+
+.category h2{
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    margin-bottom:1.5rem;
+    color:var(--ink-soft);
+}
+
+.category ul{
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+
+.category li{
+    margin-bottom:.5rem;
+}
+
+.category a{
+    color:var(--ink);
+    text-decoration:none;
+    transition:color .2s ease;
+}
+
+.category a:hover{
+    color:var(--accent);
+}
