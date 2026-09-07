@@ -1,10 +1,6 @@
 /* ============================================================
    SCRIPT.JS
    Motore del sito: legge i dati dei lavori dal Google Sheet
-   (pubblicato come CSV) e costruisce automaticamente:
-   - il lavoro in evidenza in index.html
-   - la griglia in works.html
-   - il dettaglio in work.html
    ============================================================ */
 
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQcCeE1IhaO7_Am6l5KO5TZL7S9ixISAgLK9sajgxXrp4Qu3LUb-uY7iTFodt_qQSSLFiowJcHk77D/pub?gid=0&single=true&output=csv"; 
@@ -32,12 +28,10 @@ function estraiEmbedVimeo(valore) {
   if (!valore) return "";
   const val = valore.trim();
   
-  // Se ha già il prefisso player.vimeo.com/video/...
   if (val.includes("player.vimeo.com")) {
     return val;
   }
   
-  // Se è un link normale vimeo.com/ID?h=XXX
   const match = val.match(/vimeo\.com\/(\d+)(?:\?h=([a-zA-Z0-9]+))?/);
   if (match) {
     const id = match[1];
@@ -45,11 +39,10 @@ function estraiEmbedVimeo(valore) {
     return `https://player.vimeo.com/video/${id}` + (hash ? `?h=${hash}` : "");
   }
   
-  // Fallback se è presente solo l'ID numerico
   return `https://player.vimeo.com/video/${val}`;
 }
 
-// Genera l'HTML per la copertina (usa il video Vimeo se la foto di copertina non c'è)
+// Genera l'HTML per la copertina nei box o in home
 function generaHtmlCopertina(lavoro) {
   const tipoMedia = (lavoro.tipo_media || "").toLowerCase().trim();
   const mediaVal = lavoro.media || "";
@@ -73,7 +66,7 @@ async function ottieniLavori() {
   }
 }
 
-/* ---------- Pagina index.html: mostra il lavoro con ordine=1 ---------- */
+/* ---------- Pagina index.html ---------- */
 async function inizializzaHome() {
   const contenitore = document.getElementById("hero-container");
   if (!contenitore) return;
@@ -101,7 +94,6 @@ async function inizializzaGriglia() {
   if (!container) return;
 
   const lavori = await ottieniLavori();
-
   if (!lavori || lavori.length === 0) {
     container.innerHTML = "<p>Nessun lavoro trovato.</p>";
     return;
@@ -149,7 +141,12 @@ function costruisciGalleria(lavoro) {
   const mediaVal = lavoro.media || "";
   const haVideo = tipoMedia === "video" || tipoMedia === "vimeo" || mediaVal.includes("vimeo");
 
-  // 1. Se c'è un video Vimeo, lo inserisce in cima
+  // 1. Se c'è un'immagine di copertina, la mostra SEMPRE per prima a tutta larghezza
+  if (lavoro.copertina) {
+    html += `<figure class="media-full"><img src="${lavoro.copertina}" alt="${lavoro.titolo}"></figure>`;
+  }
+
+  // 2. Se c'è un video Vimeo, lo inserisce subito dopo
   if (haVideo && mediaVal) {
     const embedSrc = estraiEmbedVimeo(mediaVal);
     html += `
@@ -164,7 +161,7 @@ function costruisciGalleria(lavoro) {
       </figure>`;
   }
 
-  // 2. Se ci sono immagini aggiuntive nella colonna 'immagini'
+  // 3. Se ci sono immagini aggiuntive nella colonna 'immagini'
   const immaginiGrezze = lavoro.immagini || "";
   const immagini = immaginiGrezze
     .split(/\r?\n/)
@@ -172,15 +169,9 @@ function costruisciGalleria(lavoro) {
     .filter(Boolean);
 
   if (immagini.length > 0) {
-    const classeFull = (immagini.length === 1 && !haVideo) ? ' class="media-full"' : '';
     html += immagini
-      .map(url => `<figure${classeFull}><img src="${url}" alt="${lavoro.titolo}"></figure>`)
+      .map(url => `<figure><img src="${url}" alt="${lavoro.titolo}"></figure>`)
       .join("");
-  }
-
-  // 3. Fallback: se non c'è né video né immagini extra, usa la copertina
-  if (!html && lavoro.copertina) {
-    html = `<figure class="media-full"><img src="${lavoro.copertina}" alt="${lavoro.titolo}"></figure>`;
   }
 
   return html;
