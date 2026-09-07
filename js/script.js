@@ -37,10 +37,21 @@ async function scaricaLavori() {
 // Costruisce l'URL/embed corretto a seconda che il media sia
 // una foto o un video (YouTube). "media" può essere un percorso
 // immagine, oppure un ID o link YouTube.
-function estraiIdYouTube(valore) {
+/*function estraiIdYouTube(valore) {
   if (!valore) return "";
   const match = valore.match(/(?:v=|youtu\.be\/)([\w-]{11})/);
   return match ? match[1] : valore.trim(); // se non è un link, assume sia già l'ID
+}*/
+
+// Funzione per estrarre l'ID di Vimeo e generare l'URL di embed corretto
+function estraiEmbedVimeo(valore) {
+  if (!valore) return "";
+  
+  // Estrae l'ID numerico sia da un link completo (es. https://vimeo.com/123456789) che da un ID semplice
+  const match = valore.match(/(?:vimeo\.com\/)(\d+)/);
+  const vimeoId = match ? match[1] : valore.trim();
+  
+  return `https://player.vimeo.com/video/${vimeoId}?color=f97373&title=0&byline=0&portrait=0`;
 }
 
 async function ottieniLavori() {
@@ -134,11 +145,53 @@ async function inizializzaGriglia() {
     `).join("");
 }
 
+// Genera la galleria o l'embed video in base al contenuto del foglio Google
+function costruisciGalleria(lavoro) {
+  const tipoMedia = (lavoro.tipo_media || "").toLowerCase().trim();
+  const mediaVal = lavoro.media || "";
+
+  // Caso 1: Video Vimeo
+  if (tipoMedia === "video" || tipoMedia === "vimeo" || mediaVal.includes("vimeo")) {
+    const embedSrc = estraiEmbedVimeo(mediaVal);
+    return `
+      <figure class="media-full" style="aspect-ratio: 16 / 9; width: 100%;">
+        <iframe 
+          src="${embedSrc}" 
+          style="width: 100%; height: 100%; border: 0;" 
+          allow="autoplay; fullscreen; picture-in-picture" 
+          allowfullscreen 
+          title="${lavoro.titolo}">
+        </iframe>
+      </figure>`;
+  }
+
+  // Caso 2: Gallerie con immagini multiple (separate da a capo nella colonna 'immagini')
+  const immaginiGrezze = lavoro.immagini || "";
+  const immagini = immaginiGrezze
+    .split(/\r?\n/)
+    .map(url => url.trim())
+    .filter(Boolean);
+
+  if (immagini.length > 0) {
+    const classeFull = immagini.length === 1 ? ' class="media-full"' : '';
+    return immagini
+      .map(url => `<figure${classeFull}><img src="${url}" alt="${lavoro.titolo}"></figure>`)
+      .join("");
+  }
+
+  // Caso 3: Fallback a una singola immagine di copertina
+  if (lavoro.copertina) {
+    return `<figure class="media-full"><img src="${lavoro.copertina}" alt="${lavoro.titolo}"></figure>`;
+  }
+
+  return "";
+}
+
 // Costruisce la galleria di immagini per la pagina di un lavoro.
 // Legge la colonna "immagini" (una URL per riga, separate con Alt+Enter
 // nel foglio). Se quella colonna è vuota, torna al comportamento
 // precedente: mostra un video oppure la sola immagine di copertina.
-function costruisciGalleria(lavoro) {
+/*function costruisciGalleria(lavoro) {
   const immaginiGrezze = lavoro.immagini || "";
   const immagini = immaginiGrezze
     .split(/\r?\n/)
@@ -163,7 +216,7 @@ function costruisciGalleria(lavoro) {
      </figure>`;
   }
   return `<figure class="media-full"><img src="${lavoro.copertina}" alt="${lavoro.titolo}"></figure>`;
-}
+}*/
 
 /* ---------- Pagina work.html: dettaglio letto da ?slug=... ---------- */
 async function inizializzaDettaglio() {
