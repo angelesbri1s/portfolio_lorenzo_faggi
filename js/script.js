@@ -11,7 +11,6 @@ const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQcCeE1I
 
 /* ---------- Funzioni di supporto ---------- */
 
-// Scarica e legge il CSV, restituisce un array di oggetti
 async function scaricaLavori() {
   if (!SHEET_CSV_URL) {
     console.warn("SHEET_CSV_URL non impostato.");
@@ -28,12 +27,26 @@ async function scaricaLavori() {
     .sort((a, b) => Number(a.ordine || 0) - Number(b.ordine || 0));
 }
 
-// Estrae l'ID Vimeo e genera il link di embed dell'iframe
+// Prepara l'URL dell'embed di Vimeo mantenendo eventuali parametri di sicurezza (es. ?h=...)
 function estraiEmbedVimeo(valore) {
   if (!valore) return "";
-  const match = valore.match(/(?:vimeo\.com\/)(\d+)/);
-  const vimeoId = match ? match[1] : valore.trim();
-  return `https://player.vimeo.com/video/${vimeoId}?color=f97373&title=0&byline=0&portrait=0`;
+  const val = valore.trim();
+  
+  // Se ha già il prefisso player.vimeo.com/video/...
+  if (val.includes("player.vimeo.com")) {
+    return val;
+  }
+  
+  // Se è un link normale vimeo.com/ID?h=XXX
+  const match = val.match(/vimeo\.com\/(\d+)(?:\?h=([a-zA-Z0-9]+))?/);
+  if (match) {
+    const id = match[1];
+    const hash = match[2];
+    return `https://player.vimeo.com/video/${id}` + (hash ? `?h=${hash}` : "");
+  }
+  
+  // Fallback se è presente solo l'ID numerico
+  return `https://player.vimeo.com/video/${val}`;
 }
 
 // Genera l'HTML per la copertina (usa il video Vimeo se la foto di copertina non c'è)
@@ -211,7 +224,7 @@ async function inizializzaDettaglio() {
     <section class="work-body">${descrizioneHTML}</section>`;
 }
 
-/* ---------- Interazioni menu e touch ---------- */
+/* ---------- Interazioni menu ---------- */
 function attivaMenuMobile() {
   const toggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector(".site-nav");
